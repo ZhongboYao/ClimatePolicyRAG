@@ -1,6 +1,6 @@
 import fitz
 import os
-import util
+from . import utils as util
 from llama_index.core.node_parser import SentenceSplitter
 from openai import OpenAI
 import re
@@ -25,7 +25,7 @@ class Chunk:
         2. If the text includes any discussion of policies, decisions, or actions related to climate change, classify it as **1**.
         3. If the text does not mention any such information, classify it as **0**.
         4. Do not provide any explanations, answer with exactly one number.
-        
+
         Examples:
         - Example 1:
         - Text: "The government introduced a new carbon tax aimed at reducing greenhouse gas emissions."
@@ -45,8 +45,8 @@ class Chunk:
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.0,  
-            max_tokens=5,     
+            temperature=0.0,
+            max_tokens=5,
         )
 
         raw_answer = response.choices[0].message.content.strip()
@@ -55,7 +55,7 @@ class Chunk:
             self.relevance = 1
         else:
             self.relevance = 0
-            
+
     def summarize_record(self):
         prompt = f"""
         You are an expert in extracting information. Your task is to provide a detailed summary of:
@@ -80,13 +80,13 @@ class Chunk:
         Summary:
         """
         response = openai_client.chat.completions.create(
-            model="gpt-4o-mini",  
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.3,  
-            max_tokens=300   
+            temperature=0.3,
+            max_tokens=300
         )
         self.summary = response.choices[0].message.content.strip()
 
@@ -101,20 +101,20 @@ class Chunk:
         Summary:
         """
         response = openai_client.chat.completions.create(
-            model="gpt-4o-mini",  
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.3,  
-            max_tokens=300   
+            temperature=0.3,
+            max_tokens=300
         )
         self.summary = response.choices[0].message.content.strip()
-        
+
     @classmethod
     def from_dict(cls, data):
         return cls(**data)
-    
+
 class PDF:
     def __init__(self, pdf_path):
         self.pdf_path = pdf_path
@@ -147,7 +147,7 @@ class PDF:
         with open(save_path, "w", encoding="utf-8") as f:
             f.write(self.content)
         print(f"Extracted text saved to: {save_path}")
-            
+
     def load_content(self, content_file):
         with open(content_file, "r", encoding="utf-8") as file:
             self.content = file.read()

@@ -1,4 +1,4 @@
-import util
+from . import utils as util
 import os
 import json
 from collections import defaultdict

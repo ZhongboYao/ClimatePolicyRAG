@@ -5,7 +5,7 @@ from qdrant_client import QdrantClient, models
 from langchain_qdrant import QdrantVectorStore, RetrievalMode
 import uuid
 from tqdm import tqdm
-import policy as pl
+from . import policy as pl
 
 openai_client = OpenAI(api_key=api.OPENAI_API)
 qdrant_client = QdrantClient(url=api.QDRANT_URL, api_key=api.QDRANT_API)

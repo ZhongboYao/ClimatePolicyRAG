@@ -2,7 +2,7 @@ from langchain.agents import AgentExecutor, Tool
 from langchain.chains import LLMChain
 from langchain.vectorstores import Qdrant
 from langchain_openai import ChatOpenAI
-import retrieval as re
+from . import retrieval as re
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Filter, FieldCondition, Range, MatchValue, MatchAny
 import api
@@ -32,7 +32,7 @@ def retrieve_country_policies(country_name: str, query: str, collection, year_th
     context = " "
     for filtered_context in retriever.filtered_contents:
         context += filtered_context
-    
+
     return context
 
 def retrieve_knowledge(query: str, collection, k=50):
@@ -44,7 +44,7 @@ def retrieve_knowledge(query: str, collection, k=50):
     context = " "
     for filtered_context in retriever.filtered_contents:
         context += filtered_context
-    
+
     return context
 
 class CountryAgent:
@@ -60,37 +60,37 @@ class CountryAgent:
 
         prompt = f"""
         You are the policy advisor for {self.country_name}, which has a {self.stance}.
-        
+
         Shared goal: {shared_goal}
-        
+
         Historical policies for {self.country_name}:
         {retrieved_policies}
 
         Relevant knowledge base items:
         {retrieved_knowledges}
 
-        Based on your country's interests and history, propose a new climate policy 
-        for {self.country_name} that aligns with the shared goal. 
-        You may also highlight any points of potential contention or 
+        Based on your country's interests and history, propose a new climate policy
+        for {self.country_name} that aligns with the shared goal.
+        You may also highlight any points of potential contention or
         unique considerations for {self.country_name}.
         """
         response = self.llm(prompt)
         self.policy_memory.append(response.content)
         return response.content
-    
+
     def react_to_other_policies(self, other_policies):
         prompt = f"""
         You are {self.country_name}'s policy advisor, with a {self.stance}.
-        
+
         Other countries have proposed the following policies:
         {other_policies}
 
         Your task:
         1. Critique or debate these proposals from the perspective of {self.country_name}.
            Identify any conflicts, disagreements, or potential synergies.
-        2. If needed, refine or adjust your own policy to protect or promote your 
+        2. If needed, refine or adjust your own policy to protect or promote your
            country's interests and approach.
-        3. Provide a clear statement of how your revised policy stands in contrast 
+        3. Provide a clear statement of how your revised policy stands in contrast
            or alignment with the others.
         """
         response = self.llm(prompt)

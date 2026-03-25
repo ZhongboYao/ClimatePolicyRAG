@@ -1,6 +1,6 @@
 import numpy as np
 from sentence_transformers import CrossEncoder
-import vector_store as vs
+from . import vector_store as vs
 
 class Retriever:
     def __init__(self, query, collection):
